@@ -11,9 +11,9 @@ func TestOnlyOldData(t* testing.T){
 	prices, _ := allPrices.Prices("MSFT")
 	ok := true
 	callsCount := 0
-	FindEvents(prices, func(today yfinance.Price, history []yfinance.Price) bool{
+	FindEvents(prices, func(today yfinance.Price, history History) bool{
 		callsCount++
-		for _, p := range(history){
+		for _, p := range(history.Prices){
 			if !today.Date.After(p.Date){
 				ok = false
 				t.Error("got non-historical price", p, "for today: ", today)
@@ -31,7 +31,7 @@ func TestFilteringFilters(t* testing.T){
 	allPrices, _ := yf.GetPrices([]string{"MSFT"}, yfinance.Date(2009, 1, 1), yfinance.Date(2009, 12, 31))
 	prices, _ := allPrices.Prices("MSFT")
 	callsCount := 0
-	events := FindEvents(prices, func(today yfinance.Price, history []yfinance.Price) bool{
+	events := FindEvents(prices, func(today yfinance.Price, history History) bool{
 		defer func(){ callsCount++ }()
 		if (callsCount % 2) == 0{
 			return true
